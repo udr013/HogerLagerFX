@@ -16,7 +16,8 @@ public  class MyButton extends Button{
         setText(a);
         setTextFill( Color.WHITE );
         minWidth(300.0);
-        setStyle( "-fx-font: 22 italic; -fx-base: #000000; " );
+        setStyle( "-fx-font: 22 italic; -fx-base: #000000; -fx-background-radius: 8; -fx-border-radius: 8;" +
+                "-fx-border-color: darkgrey" );
         //setBlendMode(BlendMode.LIGHTEN);
 
     }

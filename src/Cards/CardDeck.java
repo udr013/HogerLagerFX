@@ -12,6 +12,7 @@ public class CardDeck {
         //een ArrayList van kaarten en waardes word aangemaakt
 
         String[] suite = {"Harten", "Klaveren", "Schoppen", "Ruiten"};
+
         int y = 2;
 
         for (String x : suite) {

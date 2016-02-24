@@ -7,9 +7,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -41,7 +43,8 @@ public class MainFX extends Application {
         MyButton jaButton = new MyButton("Ja");
         MyButton neeButton = new MyButton("Nee");
         MyButton nextCardButton = new MyButton("Volgende Kaart");
-        Text instruction = new Text("Doe een gok of de volgende kaart hoger of lager is");
+
+        Text instruction = new Text("  Doe een gok of de volgende kaart hoger of lager is  ");
         instruction.setFill(Paint.valueOf("#ffffff"));
         instruction.setFont(Font.font(24));
 
@@ -49,20 +52,24 @@ public class MainFX extends Application {
         buttonGroup = new HBox(15, hogerButton, lagerButton);
         buttonGroup.setPadding(new Insets(0, 0, 30, 0));
         HBox cardGroup = new HBox(30, oldCardImage, newCardImage);
-        //cardGroup.isResizable();
+
         HBox textHBox = new HBox(instruction);
+        textHBox.setMinHeight(40);
+        textHBox.maxWidthProperty().bind(instruction.wrappingWidthProperty().add(49));
         textHBox.setAlignment(Pos.CENTER);
-        textHBox.setOpacity(70);
+        textHBox.setStyle("-fx-background-color: black; -fx-background-radius: 30; -fx-border-color: darkgrey; -fx-border-radius: 30 ");
+        textHBox.setOpacity(0.8);
+
         VBox groups = new VBox(30, cardGroup, textHBox, buttonGroup);
         groups.setPadding(new Insets(30, 30, 0, 30));
 
         //oldCardImage.fitHeightProperty().bind(cardGroup.heightProperty());
         //oldCardImage.isPreserveRatio();
 
-        Image backCard = new Image("Cards/AllWheel/background.png");
+        Image backCard = new Image("Cards/AllWheel/background2.png");
         backCard.isPreserveRatio();
-        ImageView backgroundImage = new ImageView(backCard);
-        backgroundImage.setStyle(";-fx-background-repeat: repeat;");
+        //ImageView backgroundImage = new ImageView(backCard);
+        //backgroundImage.setStyle(";-fx-background-repeat: repeat;");
         StackPane background = new StackPane(groups);
         background.setStyle("-fx-background-image: url('Cards/AllWheel/background.png');-fx-background-repeat: repeat;");
         //backgroundImage.fitWidthProperty().bind(primaryStage.widthProperty());
@@ -81,14 +88,14 @@ public class MainFX extends Application {
 
 
         hogerButton.setOnAction(e -> {
-            instruction.setText("Je hebt HOGER Gekozen, neem volgende kaart");
+            instruction.setText("  Je hebt HOGER Gekozen, neem volgende kaart  ");
             buttonGroup.getChildren().clear();
             buttonGroup.getChildren().add(nextCardButton);
 
         });
 
         lagerButton.setOnAction(e -> {
-            instruction.setText("Je hebt LAGER Gekozen, neem volgende kaart");
+            instruction.setText("  Je hebt LAGER Gekozen, neem volgende kaart  ");
             buttonGroup.getChildren().clear();
             buttonGroup.getChildren().add(nextCardButton);
         });
@@ -105,12 +112,12 @@ public class MainFX extends Application {
             int size = cards.getSize();
             buttonGroup.getChildren().clear();
             if (size <= 1) {
-                instruction.setText(result + " De Kaarten zijn op nog een spelletje? ");
+                instruction.setText(result + "  De Kaarten zijn op nog een spelletje?  ");
                 buttonGroup.getChildren().addAll(jaButton, neeButton);
             } else {
 
                 buttonGroup.getChildren().addAll(hogerButton, lagerButton);
-                instruction.setText(result + " Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size +" kaarten");
+                instruction.setText(result + " Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
             }
         });
 
@@ -125,11 +132,11 @@ public class MainFX extends Application {
 
     private String getResult() {
         if (previousCard.cardValue < newCard.cardValue) {
-            return "De nieuwe  kaart is hoger.";
+            return "  De nieuwe  kaart is hoger.";
         } else if (previousCard.cardValue == newCard.cardValue) {
-            return "De nieuwe  kaart is gelijk.";
+            return "  De nieuwe  kaart is gelijk.";
         } else {
-            return "De nieuwe  kaart is lager.";
+            return "  De nieuwe  kaart is lager.";
         }
     }
 
