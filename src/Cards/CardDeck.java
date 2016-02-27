@@ -35,8 +35,7 @@ public class CardDeck {
 
     public Card getCard() {
         int rand = (int) (Math.random() * cards.size());
-        Card newCard = (Card) cards.get(rand);
-        return newCard;
+        return cards.get(rand);
     }
 
 

@@ -18,7 +18,7 @@ public  class MyButton extends Button{
         minWidth(300.0);
         setStyle( "-fx-font: 22 italic; -fx-base: #000000; -fx-background-radius: 8; -fx-border-radius: 8;" +
                 "-fx-border-color: darkgrey" );
-        //setBlendMode(BlendMode.LIGHTEN);
+
 
     }
     public MyButton(String a, Pos b){
@@ -28,7 +28,4 @@ public  class MyButton extends Button{
 
     }
 
-
-//    public void addEventHandler(Main.AfbrekenEventHandler afbrekenEventHandler) {
-//    }
 }
