@@ -35,27 +35,24 @@ public class MainFX extends Application {
     ImageView newCardImage = new ImageView(card2);
     ImageView counterField = new ImageView("Cards/AllWheel/counterBackground.png");
     ImageView scoreField = new ImageView("Cards/AllWheel/counterBackground.png");
+    MyButton jaButton = new MyButton("Ja");
+    MyButton neeButton = new MyButton("Nee");
+    MyButton hogerButton = new MyButton("Hoger");
+    MyButton lagerButton = new MyButton("Lager");
     HBox buttonGroup;
     HBox remainText;
     HBox scoreText;
+    Text instruction;
     StackPane test;
     StackPane test2;
     int score=0;
     boolean guess;
 
-    HBox allGroups = new HBox();
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        MyButton hogerButton = new MyButton("Hoger");
-        MyButton lagerButton = new MyButton("Lager");
 
-        MyButton jaButton = new MyButton("Ja");
-        MyButton neeButton = new MyButton("Nee");
-        MyButton nextCardButton = new MyButton("Volgende Kaart");
-
-        Text instruction = new Text("  Doe een gok of de volgende kaart hoger of lager is  ");
+        instruction = new Text("  Doe een gok of de volgende kaart hoger of lager is  ");
         instruction.setFill(Paint.valueOf("#ffffff"));
         instruction.setFont(Font.font(24));
 
@@ -102,49 +99,17 @@ public class MainFX extends Application {
 
         hogerButton.setOnAction(e -> {
             instruction.setText("  Je hebt HOGER Gekozen, neem volgende kaart  ");
-            buttonGroup.getChildren().clear();
-            buttonGroup.getChildren().add(nextCardButton);
             guess = true;
+            getUpdatedScreen();
 
         });
 
         lagerButton.setOnAction(e -> {
             instruction.setText("  Je hebt LAGER Gekozen, neem volgende kaart  ");
-            buttonGroup.getChildren().clear();
-            buttonGroup.getChildren().add(nextCardButton);
             guess= false;
+            getUpdatedScreen();
         });
 
-        nextCardButton.setOnAction(e -> {
-
-            previousCard = newCard;
-            oldCardImage.setImage(new Image(previousCard.cardImage));
-            cards.remove(newCard);
-            newCard = getNewCard();
-            newCardImage.setImage(new Image(newCard.cardImage));
-            getResult();
-
-            int size = cards.getSize();
-
-            remainText= getDigits(cards.getSize(), Color.BLUE);
-            scoreText= getDigits(score, Color.DARKGREEN);
-
-            test.getChildren().clear();
-            test.getChildren().addAll(counterField,remainText);
-
-            test2.getChildren().clear();
-            test2.getChildren().addAll(scoreField,scoreText);
-
-            buttonGroup.getChildren().clear();
-            if (size <= 1) {
-                instruction.setText("  De Kaarten zijn op nog een spelletje?  ");
-                buttonGroup.getChildren().addAll(jaButton, neeButton);
-            } else {
-
-                buttonGroup.getChildren().addAll(hogerButton, lagerButton);
-                instruction.setText(" Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
-            }
-        });
 
         cardGroup.setAlignment(Pos.CENTER);
         buttonGroup.setAlignment(Pos.CENTER);
@@ -180,6 +145,36 @@ public class MainFX extends Application {
         return digitBox;
 
     }
+    public void getUpdatedScreen(){
+
+        previousCard = newCard;
+        oldCardImage.setImage(new Image(previousCard.cardImage));
+        cards.remove(newCard);
+        newCard = getNewCard();
+        newCardImage.setImage(new Image(newCard.cardImage));
+        getResult();
+
+        int size = cards.getSize();
+
+        remainText= getDigits(cards.getSize(), Color.BLUE);
+        scoreText= getDigits(score, Color.DARKGREEN);
+
+        test.getChildren().clear();
+        test.getChildren().addAll(counterField,remainText);
+
+        test2.getChildren().clear();
+        test2.getChildren().addAll(scoreField,scoreText);
+
+
+        if (size <= 1) {
+            instruction.setText("  De Kaarten zijn op nog een spelletje?  ");
+            buttonGroup.getChildren().clear();
+            buttonGroup.getChildren().addAll(jaButton, neeButton);
+        } else {
+            instruction.setText(" Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
+        }
+    }
+
 
     private Effect getLighting(Color mycolor) {
         Light.Distant light = new Light.Distant();
@@ -192,7 +187,7 @@ public class MainFX extends Application {
     }
 
     private int getResult() {
-        if (((newCard.cardValue > previousCard.cardValue)&&guess==true)||((newCard.cardValue < previousCard.cardValue)&&guess==false)){
+        if (((newCard.cardValue > previousCard.cardValue)&&guess)||((newCard.cardValue < previousCard.cardValue)&&!guess)){
             return score++;
         } else if (previousCard.cardValue == newCard.cardValue) {
             return score;
