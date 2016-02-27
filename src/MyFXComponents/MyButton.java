@@ -1,4 +1,4 @@
-package Cards;
+package MyFXComponents;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;

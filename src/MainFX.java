@@ -1,6 +1,7 @@
 import Cards.Card;
 import Cards.CardDeck;
-import Cards.MyButton;
+import MyFXComponents.MyButton;
+import MyFXComponents.MyTextHBox;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -35,16 +35,16 @@ public class MainFX extends Application {
     ImageView newCardImage = new ImageView(card2);
     ImageView counterField = new ImageView("Cards/AllWheel/counterBackground.png");
     ImageView scoreField = new ImageView("Cards/AllWheel/counterBackground.png");
-    MyButton jaButton = new MyButton("Ja");
-    MyButton neeButton = new MyButton("Nee");
-    MyButton hogerButton = new MyButton("Hoger");
-    MyButton lagerButton = new MyButton("Lager");
+    MyButton yesButton = new MyButton("Ja");
+    MyButton noButton = new MyButton("Nee");
+    MyButton higherButton = new MyButton("Hoger");
+    MyButton lowerButton = new MyButton("Lager");
     HBox buttonGroup;
     HBox remainText;
     HBox scoreText;
     Text instruction;
-    StackPane test;
-    StackPane test2;
+    StackPane cardsRemainPanel;
+    StackPane scorePanel;
     int score=0;
     boolean guess;
 
@@ -53,28 +53,36 @@ public class MainFX extends Application {
 
 
         instruction = new Text("  Doe een gok of de volgende kaart hoger of lager is  ");
-        instruction.setFill(Paint.valueOf("#ffffff"));
+        instruction.setFill(Color.WHITE);
+        //instruction.setEffect(getLighting(Color.WHITE));
         instruction.setFont(Font.font(24));
 
-        remainText  = getDigits(cards.getSize(),Color.BLUE);
+        remainText  = getDigits((cards.getSize()-1),Color.BLUE);
         scoreText  = getDigits(score, Color.DARKGREEN);
 
-        test = new StackPane(counterField,remainText);
-        test2 = new StackPane(scoreField,scoreText);
+        Text cardsRemainHint = new Text(" Kaarten over ");
+        cardsRemainHint.setFont(Font.font(24));
+        cardsRemainHint.setFill(Color.WHITE);
+        MyTextHBox cardsRemain = new MyTextHBox(cardsRemainHint);
 
-        VBox testField= new VBox(test,test2);
-        testField.setPadding(new Insets(30,30,30,30));
+        Text scoreHint = new Text("Score");
+        scoreHint.setFont(Font.font(24));
+        scoreHint.setFill(Color.WHITE);
+        MyTextHBox scoreShow = new MyTextHBox(scoreHint);
 
-        buttonGroup = new HBox(15, hogerButton, lagerButton);
+        cardsRemainPanel = new StackPane(counterField,remainText);
+        scorePanel = new StackPane(scoreField,scoreText);
+
+        VBox infoField= new VBox(cardsRemain,cardsRemainPanel,scoreShow, scorePanel);
+        infoField.setPadding(new Insets(0,30,30,30));
+
+        buttonGroup = new HBox(15, higherButton, lowerButton);
         buttonGroup.setPadding(new Insets(0, 0, 30, 0));
-        HBox cardGroup = new HBox(30, oldCardImage, newCardImage,testField);
+        HBox cardGroup = new HBox(30, oldCardImage, newCardImage,infoField);
 
-        HBox textHBox = new HBox(instruction);
-        textHBox.setMinHeight(40);
+        MyTextHBox textHBox = new MyTextHBox(instruction);
         textHBox.maxWidthProperty().bind(instruction.wrappingWidthProperty().add(49));
-        textHBox.setAlignment(Pos.CENTER);
-        textHBox.setStyle("-fx-background-color: black; -fx-background-radius: 30; -fx-border-color: darkgrey; -fx-border-radius: 30 ");
-        textHBox.setOpacity(0.8);
+
 
         VBox groups = new VBox(30, cardGroup, textHBox, buttonGroup);
         groups.setAlignment(Pos.CENTER);
@@ -85,7 +93,7 @@ public class MainFX extends Application {
         background.setStyle("-fx-background-image: url('Cards/AllWheel/background.png');-fx-background-repeat: repeat;");
 
 
-        jaButton.setOnAction(e -> {
+        yesButton.setOnAction(e -> {
             try {
                 start(primaryStage);
             } catch (Exception e1) {
@@ -94,17 +102,17 @@ public class MainFX extends Application {
             cards = new CardDeck();
         });
 
-        neeButton.setOnAction(e -> System.exit(0));
+        noButton.setOnAction(e -> System.exit(0));
 
 
-        hogerButton.setOnAction(e -> {
+        higherButton.setOnAction(e -> {
             instruction.setText("  Je hebt HOGER Gekozen, neem volgende kaart  ");
             guess = true;
             getUpdatedScreen();
 
         });
 
-        lagerButton.setOnAction(e -> {
+        lowerButton.setOnAction(e -> {
             instruction.setText("  Je hebt LAGER Gekozen, neem volgende kaart  ");
             guess= false;
             getUpdatedScreen();
@@ -133,11 +141,11 @@ public class MainFX extends Application {
             color =Color.CRIMSON;
         }
         String firstnr =  digits.substring(0,1);
-        ImageView firstDigit = new ImageView("Cards/Digits/clock_stopwatch_digit_"+ firstnr+".png");
+        ImageView firstDigit = new ImageView("Digits/clock_stopwatch_digit_"+ firstnr+".png");
         firstDigit.setEffect(getLighting(color));
 
         String secondnr = digits.substring(1,2);
-        ImageView secondDigit = new ImageView("Cards/Digits/clock_stopwatch_digit_"+ secondnr+".png");
+        ImageView secondDigit = new ImageView("Digits/clock_stopwatch_digit_"+ secondnr+".png");
         secondDigit.setEffect(getLighting(color));
 
         digitBox.getChildren().addAll(firstDigit,secondDigit);
@@ -159,17 +167,17 @@ public class MainFX extends Application {
         remainText= getDigits(cards.getSize(), Color.BLUE);
         scoreText= getDigits(score, Color.DARKGREEN);
 
-        test.getChildren().clear();
-        test.getChildren().addAll(counterField,remainText);
+        cardsRemainPanel.getChildren().clear();
+        cardsRemainPanel.getChildren().addAll(counterField,remainText);
 
-        test2.getChildren().clear();
-        test2.getChildren().addAll(scoreField,scoreText);
+        scorePanel.getChildren().clear();
+        scorePanel.getChildren().addAll(scoreField,scoreText);
 
 
         if (size <= 1) {
             instruction.setText("  De Kaarten zijn op nog een spelletje?  ");
             buttonGroup.getChildren().clear();
-            buttonGroup.getChildren().addAll(jaButton, neeButton);
+            buttonGroup.getChildren().addAll(yesButton, noButton);
         } else {
             instruction.setText(" Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
         }
