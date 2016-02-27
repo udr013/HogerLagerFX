@@ -22,11 +22,9 @@ public  class MyButton extends Button{
 
     }
     public MyButton(String a, Pos b){
+        this(a);// calling the above constructor
         setAlignment(b);
-        setText(a);
-        setTextFill( Color.WHITE );
-        minWidth(300.0);
-        setStyle( "-fx-font: 22 italic; -fx-base: #000000; " );
+
 
     }
 

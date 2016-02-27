@@ -5,9 +5,11 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -31,11 +33,20 @@ public class MainFX extends Application {
     Image card2 = new Image(newCard.cardImage);
     ImageView oldCardImage = new ImageView(card1);
     ImageView newCardImage = new ImageView(card2);
+    ImageView counterField = new ImageView("Cards/AllWheel/counterBackground.png");
+    ImageView scoreField = new ImageView("Cards/AllWheel/counterBackground.png");
     HBox buttonGroup;
+    HBox remainText;
+    HBox scoreText;
+    StackPane test;
+    StackPane test2;
+    int score=0;
+    boolean guess;
+
+    HBox allGroups = new HBox();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
 
         MyButton hogerButton = new MyButton("Hoger");
         MyButton lagerButton = new MyButton("Lager");
@@ -48,10 +59,18 @@ public class MainFX extends Application {
         instruction.setFill(Paint.valueOf("#ffffff"));
         instruction.setFont(Font.font(24));
 
+        remainText  = getDigits(cards.getSize(),Color.BLUE);
+        scoreText  = getDigits(score, Color.DARKGREEN);
+
+        test = new StackPane(counterField,remainText);
+        test2 = new StackPane(scoreField,scoreText);
+
+        VBox testField= new VBox(test,test2);
+        testField.setPadding(new Insets(30,30,30,30));
 
         buttonGroup = new HBox(15, hogerButton, lagerButton);
         buttonGroup.setPadding(new Insets(0, 0, 30, 0));
-        HBox cardGroup = new HBox(30, oldCardImage, newCardImage);
+        HBox cardGroup = new HBox(30, oldCardImage, newCardImage,testField);
 
         HBox textHBox = new HBox(instruction);
         textHBox.setMinHeight(40);
@@ -61,19 +80,13 @@ public class MainFX extends Application {
         textHBox.setOpacity(0.8);
 
         VBox groups = new VBox(30, cardGroup, textHBox, buttonGroup);
+        groups.setAlignment(Pos.CENTER);
+
         groups.setPadding(new Insets(30, 30, 0, 30));
 
-        //oldCardImage.fitHeightProperty().bind(cardGroup.heightProperty());
-        //oldCardImage.isPreserveRatio();
-
-        Image backCard = new Image("Cards/AllWheel/background2.png");
-        backCard.isPreserveRatio();
-        //ImageView backgroundImage = new ImageView(backCard);
-        //backgroundImage.setStyle(";-fx-background-repeat: repeat;");
         StackPane background = new StackPane(groups);
         background.setStyle("-fx-background-image: url('Cards/AllWheel/background.png');-fx-background-repeat: repeat;");
-        //backgroundImage.fitWidthProperty().bind(primaryStage.widthProperty());
-        // backgroundImage.fitHeightProperty().bind(primaryStage.heightProperty());
+
 
         jaButton.setOnAction(e -> {
             try {
@@ -91,6 +104,7 @@ public class MainFX extends Application {
             instruction.setText("  Je hebt HOGER Gekozen, neem volgende kaart  ");
             buttonGroup.getChildren().clear();
             buttonGroup.getChildren().add(nextCardButton);
+            guess = true;
 
         });
 
@@ -98,6 +112,7 @@ public class MainFX extends Application {
             instruction.setText("  Je hebt LAGER Gekozen, neem volgende kaart  ");
             buttonGroup.getChildren().clear();
             buttonGroup.getChildren().add(nextCardButton);
+            guess= false;
         });
 
         nextCardButton.setOnAction(e -> {
@@ -107,17 +122,27 @@ public class MainFX extends Application {
             cards.remove(newCard);
             newCard = getNewCard();
             newCardImage.setImage(new Image(newCard.cardImage));
-            String result = getResult();
+            getResult();
 
             int size = cards.getSize();
+
+            remainText= getDigits(cards.getSize(), Color.BLUE);
+            scoreText= getDigits(score, Color.DARKGREEN);
+
+            test.getChildren().clear();
+            test.getChildren().addAll(counterField,remainText);
+
+            test2.getChildren().clear();
+            test2.getChildren().addAll(scoreField,scoreText);
+
             buttonGroup.getChildren().clear();
             if (size <= 1) {
-                instruction.setText(result + "  De Kaarten zijn op nog een spelletje?  ");
+                instruction.setText("  De Kaarten zijn op nog een spelletje?  ");
                 buttonGroup.getChildren().addAll(jaButton, neeButton);
             } else {
 
                 buttonGroup.getChildren().addAll(hogerButton, lagerButton);
-                instruction.setText(result + " Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
+                instruction.setText(" Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
             }
         });
 
@@ -130,13 +155,49 @@ public class MainFX extends Application {
         primaryStage.show();
     }
 
-    private String getResult() {
-        if (previousCard.cardValue < newCard.cardValue) {
-            return "  De nieuwe  kaart is hoger.";
+    private HBox getDigits(int size, Color color) {
+        HBox digitBox = new HBox();
+        String digits = ""+(size);
+        if (digits.length()==1){
+            digits ="0"+digits;
+        }else {
+            digits = ""+(size);
+        }
+
+        if(Integer.parseInt(digits)<=0){
+            color =Color.CRIMSON;
+        }
+        String firstnr =  digits.substring(0,1);
+        ImageView firstDigit = new ImageView("Cards/Digits/clock_stopwatch_digit_"+ firstnr+".png");
+        firstDigit.setEffect(getLighting(color));
+
+        String secondnr = digits.substring(1,2);
+        ImageView secondDigit = new ImageView("Cards/Digits/clock_stopwatch_digit_"+ secondnr+".png");
+        secondDigit.setEffect(getLighting(color));
+
+        digitBox.getChildren().addAll(firstDigit,secondDigit);
+        digitBox.setAlignment(Pos.CENTER);
+        return digitBox;
+
+    }
+
+    private Effect getLighting(Color mycolor) {
+        Light.Distant light = new Light.Distant();
+        light.setColor(mycolor);
+        light.setAzimuth(-135.0);
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        lighting.setSurfaceScale(5.0);
+        return lighting;
+    }
+
+    private int getResult() {
+        if (((newCard.cardValue > previousCard.cardValue)&&guess==true)||((newCard.cardValue < previousCard.cardValue)&&guess==false)){
+            return score++;
         } else if (previousCard.cardValue == newCard.cardValue) {
-            return "  De nieuwe  kaart is gelijk.";
+            return score;
         } else {
-            return "  De nieuwe  kaart is lager.";
+            return score--;
         }
     }
 
