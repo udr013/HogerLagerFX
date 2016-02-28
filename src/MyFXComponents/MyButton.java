@@ -1,11 +1,8 @@
 package MyFXComponents;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 
 /**

@@ -2,6 +2,8 @@ import Cards.Card;
 import Cards.CardDeck;
 import MyFXComponents.MyButton;
 import MyFXComponents.MyTextHBox;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * Created by udr013 on 23-2-2016.
@@ -94,26 +97,30 @@ public class MainFX extends Application {
 
 
         yesButton.setOnAction(e -> {
+            score=0;
+            cards = new CardDeck();
             try {
                 start(primaryStage);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            cards = new CardDeck();
+            oldCardImage.setImage(new Image("Cards/AllWheel/_Back.png"));
+
         });
 
         noButton.setOnAction(e -> System.exit(0));
 
 
         higherButton.setOnAction(e -> {
-            instruction.setText("  Je hebt HOGER Gekozen, neem volgende kaart  ");
+            animateCard();
+            //instruction.setText("  Je hebt HOGER Gekozen, neem volgende kaart  ");
             guess = true;
             getUpdatedScreen();
 
         });
 
         lowerButton.setOnAction(e -> {
-            instruction.setText("  Je hebt LAGER Gekozen, neem volgende kaart  ");
+            //instruction.setText("  Je hebt LAGER Gekozen, neem volgende kaart  ");
             guess= false;
             getUpdatedScreen();
         });
@@ -153,18 +160,31 @@ public class MainFX extends Application {
         return digitBox;
 
     }
+
+    public void animateCard() {
+        TranslateTransition tt =
+                new TranslateTransition(Duration.seconds(3), newCardImage);
+
+        //tt.setFromX( -(logoImage.getFitWidth()) );
+        tt.setToX( oldCardImage.getX() );
+        tt.setCycleCount( Timeline.INDEFINITE );
+        tt.play();
+    }
+
     public void getUpdatedScreen(){
 
         previousCard = newCard;
+
         oldCardImage.setImage(new Image(previousCard.cardImage));
+
         cards.remove(newCard);
         newCard = getNewCard();
         newCardImage.setImage(new Image(newCard.cardImage));
         getResult();
 
-        int size = cards.getSize();
+        //int size = (cards.getSize()-1);
 
-        remainText= getDigits(cards.getSize(), Color.BLUE);
+        remainText= getDigits(cards.getSize()-1, Color.BLUE);
         scoreText= getDigits(score, Color.DARKGREEN);
 
         cardsRemainPanel.getChildren().clear();
@@ -174,12 +194,11 @@ public class MainFX extends Application {
         scorePanel.getChildren().addAll(scoreField,scoreText);
 
 
-        if (size <= 1) {
+        if (cards.getSize() == 1) {
             instruction.setText("  De Kaarten zijn op nog een spelletje?  ");
             buttonGroup.getChildren().clear();
             buttonGroup.getChildren().addAll(yesButton, noButton);
-        } else {
-            instruction.setText(" Doe een gok of de volgende kaart hoger of lager is er zijn nog: " + size + " kaarten ");
+
         }
     }
 
@@ -187,19 +206,24 @@ public class MainFX extends Application {
     private Effect getLighting(Color mycolor) {
         Light.Distant light = new Light.Distant();
         light.setColor(mycolor);
-        light.setAzimuth(-135.0);
+        light.setAzimuth(-135.0);// schadow direction
         Lighting lighting = new Lighting();
         lighting.setLight(light);
-        lighting.setSurfaceScale(5.0);
+        lighting.setSurfaceScale(5.0);//bumbprojection
+        lighting.setDiffuseConstant(0.6);// belichtings  sterkte
+        lighting.setSpecularConstant(4);
         return lighting;
     }
 
     private int getResult() {
         if (((newCard.cardValue > previousCard.cardValue)&&guess)||((newCard.cardValue < previousCard.cardValue)&&!guess)){
+            instruction.setText("  Je hebt Goed Gekozen! Neem volgende kaart  ");
             return score++;
         } else if (previousCard.cardValue == newCard.cardValue) {
+            instruction.setText("  De kaart is gelijk, Neem volgende kaart  ");
             return score;
         } else {
+            instruction.setText("  Helaas verkeerde gok! Neem volgende kaart  ");
             return score--;
         }
     }
