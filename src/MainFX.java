@@ -165,7 +165,7 @@ public class MainFX extends Application {
         TranslateTransition tt =
                 new TranslateTransition(Duration.seconds(3), newCardImage);
 
-        //tt.setFromX( -(logoImage.getFitWidth()) );
+        tt.setFromX( -(newCardImage.getFitWidth()) );
         tt.setToX( oldCardImage.getX() );
         tt.setCycleCount( Timeline.INDEFINITE );
         tt.play();

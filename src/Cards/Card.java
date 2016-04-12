@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 /**
  * Created by udr013 on 22-2-2016.
  */
-public class Card extends Object{
+public class Card{
     public String cardName;
     public int cardValue;
     public String cardImage;

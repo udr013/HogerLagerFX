@@ -17,7 +17,7 @@ public  class MyButton extends Button{
                 "-fx-border-color: darkgrey" );
 
 
-    }
+    } 
     public MyButton(String a, Pos b){
         this(a);// calling the above constructor
         setAlignment(b);
